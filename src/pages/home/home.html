@@ -1,0 +1,71 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <ion-title>
+      SPAN
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+
+
+  <ion-grid showWhen="core" style="padding: 20px 10%">
+
+    <ion-row padding style="background: #EEEEEE; height: 85vh;">
+
+      <ion-col width-33>
+
+        <ion-list style="height: 100%; overflow: scroll; overflow-x: hidden">
+          <button ion-item *ngFor="let i of items">
+            
+              <ion-grid no-padding>
+                <ion-row>
+                  <ion-col width-80 no-padding>
+                    <h2>Notice Title</h2>
+                  </ion-col>
+                  <ion-col width-20 no-padding>
+                    <h2 text-right><small>8.50 PM</small></h2>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+              <h3>Created By You</h3>  
+          
+          </button>
+        </ion-list>
+
+      </ion-col>
+      
+      <ion-col width-67>
+
+        
+
+      </ion-col>
+
+    </ion-row>
+
+  </ion-grid>
+
+
+  <ion-list hideWhen="core">
+    <button ion-item *ngFor="let i of items">
+      
+        <ion-grid no-padding>
+          <ion-row>
+            <ion-col width-80 no-padding>
+              <h2>Notice Title</h2>
+            </ion-col>
+            <ion-col width-20 no-padding>
+              <h2 text-right><small>8.50 PM</small></h2>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <h3>Created By You</h3>  
+    
+    </button>
+  </ion-list>
+
+  <ion-fab bottom right color="secondary" (click)="addNewNotice()">
+    <button ion-fab><ion-icon name="add"></ion-icon></button>
+  </ion-fab>
+
+</ion-content>
