@@ -34,10 +34,17 @@
         </ion-list>
 
       </ion-col>
-      
+
       <ion-col width-67>
 
-        
+        <div class="vertical-center-elements" text-center>
+
+          <div>
+            <img src="assets/icon/main" alt="">
+            <h1>Welcome to SPAN!</h1>
+          </div>
+
+        </div>
 
       </ion-col>
 
@@ -64,8 +71,8 @@
     </button>
   </ion-list>
 
-  <ion-fab bottom right color="secondary" (click)="addNewNotice()">
-    <button ion-fab><ion-icon name="add"></ion-icon></button>
+  <ion-fab bottom right (click)="addNewNotice()">
+    <button ion-fab color="secondary"><ion-icon name="add"></ion-icon></button>
   </ion-fab>
 
 </ion-content>
