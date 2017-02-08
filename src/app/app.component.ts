@@ -17,7 +17,7 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       //StatusBar.styleDefault();
       if (platform.is('android')) {
-        StatusBar.backgroundColorByHexString("#5AB831");
+        StatusBar.backgroundColorByHexString("#6F8996");
       }
     });
   }

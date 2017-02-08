@@ -40,7 +40,7 @@
         <div class="vertical-center-elements" text-center>
 
           <div>
-            <img src="assets/icon/main" alt="">
+            <img src="assets/icon/main.png" alt="">
             <h1>Welcome to SPAN!</h1>
           </div>
 
@@ -53,7 +53,7 @@
   </ion-grid>
 
 
-  <ion-list hideWhen="core">
+  <!--ion-list>
     <button ion-item *ngFor="let i of items">
       
         <ion-grid no-padding>
@@ -69,7 +69,45 @@
         <h3>Created By You</h3>  
     
     </button>
-  </ion-list>
+
+
+  </ion-list-->
+  <div hideWhen="core">
+
+    <ion-card *ngFor="let i of items">
+
+      <button ion-button full clear color="dark">
+          <b>Notice Title</b>
+      </button>
+      <!--ion-card-header>
+        <b>Notice Title</b>    
+      </ion-card-header-->
+      <ion-card-content>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni repudiandae distinctio quisquam ipsa eius eos reprehenderit
+        </p>
+      </ion-card-content>
+
+      <ion-row no-padding>
+        <ion-col text-left>
+          <button ion-button clear small color="danger" icon-left>
+            <ion-icon name='eye'></ion-icon>
+            View
+          </button>
+        </ion-col>
+        <ion-col text-right>
+          <button ion-button clear small color="danger" icon-left>
+            <ion-icon name='share-alt'></ion-icon>
+            Share
+          </button>
+        </ion-col>
+      </ion-row>
+
+    </ion-card>
+
+  </div>
+
+
 
   <ion-fab bottom right (click)="addNewNotice()">
     <button ion-fab color="secondary"><ion-icon name="add"></ion-icon></button>
