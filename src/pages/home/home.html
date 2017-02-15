@@ -8,12 +8,13 @@
 
 <ion-content style="background: #E3E9EC">
 
+  <p showWhen="cordova" padding style="-webkit-user-select: auto;">Token: {{ token }}</p>
 
   <ion-grid showWhen="core" style="padding: 20px 10%">
 
-    <ion-row no-padding style="background: #CFC7B8; height: 85vh;">
+    <ion-row no-padding style="height: 85vh;">
 
-      <ion-col no-padding width-33>
+      <ion-col no-padding width-33 style="background: white; margin-top: 1px;">
 
         <ion-list style="height: 100%; overflow: scroll; overflow-x: hidden">
           <button ion-item *ngFor="let i of items">
@@ -35,7 +36,7 @@
 
       </ion-col>
 
-      <ion-col width-67>
+      <ion-col no-padding width-67 style="background: #CFC7B8;">
 
         <div class="vertical-center-elements" text-center>
 

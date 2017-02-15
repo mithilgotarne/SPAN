@@ -2,9 +2,11 @@ import { Component } from '@angular/core';
 
 import { Splashscreen } from 'ionic-native';
 
-import { NavController, ModalController } from 'ionic-angular';
+import { NavController, ModalController, AlertController, Platform } from 'ionic-angular';
 
 import { AddNoticePage } from '../add-notice/add-notice';
+
+import { Firebase } from 'ionic-native';
 
 @Component({
   selector: 'page-home',
@@ -13,8 +15,23 @@ import { AddNoticePage } from '../add-notice/add-notice';
 export class HomePage {
 
   items = [];
-  constructor(public navCtrl: NavController, private modalCtrl: ModalController) {
-    Splashscreen.hide();
+  token = "";
+  constructor(public navCtrl: NavController,
+    private modalCtrl: ModalController,
+    private alertCtrl: AlertController,
+    private platform: Platform) {
+    platform.ready().then(() => {
+      if (platform.is('cordova')) {
+        Firebase.getToken()
+          .then(token => this.token = token) // save the token server-side and use it to push notifications to this device
+          .catch(error => this.token = error);
+
+        Firebase.onTokenRefresh()
+          .subscribe((token: string) => this.token = token);
+
+        Splashscreen.hide();
+      }
+    });
   }
 
   ionViewWillEnter() {
