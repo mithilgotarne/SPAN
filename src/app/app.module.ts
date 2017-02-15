@@ -7,6 +7,16 @@ import { AddNoticePage } from '../pages/add-notice/add-notice';
 import { MaterialModule } from '@angular/material';
 import 'hammerjs';
 
+import { AngularFireModule } from 'angularfire2';
+
+export const firebaseConfig = {
+  apiKey: "AIzaSyANRmKTiHEyGvAYN9kIqS5CD7frgx5M3q4",
+  authDomain: "span-cf33a.firebaseapp.com",
+  databaseURL: "https://span-cf33a.firebaseio.com",
+  storageBucket: "span-cf33a.appspot.com",
+  messagingSenderId: "753783481153"
+};
+
 @NgModule({
   declarations: [
     MyApp,
@@ -15,6 +25,7 @@ import 'hammerjs';
   ],
   imports: [
     IonicModule.forRoot(MyApp),
+    AngularFireModule.initializeApp(firebaseConfig),
     MaterialModule.forRoot(),
   ],
   bootstrap: [IonicApp],
@@ -23,6 +34,6 @@ import 'hammerjs';
     HomePage,
     AddNoticePage
   ],
-  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]
+  providers: [{ provide: ErrorHandler, useClass: IonicErrorHandler },]
 })
-export class AppModule {}
+export class AppModule { }

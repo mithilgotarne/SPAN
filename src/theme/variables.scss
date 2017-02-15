@@ -23,12 +23,22 @@ $fab-content-margin : 20px;
 // colors so you can add, rename and remove colors as needed.
 // The "primary" color is the only required color in the map.
 
+  $pattens-blue: #E3E9EC;
+  $aubergine: #1F1C1D;
+  $polo-blue: #86AAC6;
+  $dark-tangerine: #FFA917;
+  $bermuda-grey: #6F8996;
+  $stark-white: #CFC7B8;
+
+
+
 $colors: (
-  primary:    #83CF1C,
-  secondary:  #DF4A32,
+  primary:    $polo-blue,
+  secondary:  $dark-tangerine,
   danger:     #f53d3d,
-  light:      #DCEDC8,
-  dark:       #5AB831
+  light:      $pattens-blue,
+  dark:       $aubergine,
+  icon_grey: #D8D8D8,
 );
 
 
