@@ -2,11 +2,32 @@ import { Component } from '@angular/core';
 
 import { Splashscreen } from 'ionic-native';
 
-import { NavController, ModalController, AlertController, Platform } from 'ionic-angular';
+import {
+  NavController, NavParams,
+  ModalController, ToastController, Platform, PopoverController, ViewController
+} from 'ionic-angular';
 
 import { AddNoticePage } from '../add-notice/add-notice';
-
 import { Firebase } from 'ionic-native';
+
+import { AngularFireAuth } from 'angularfire2';
+
+@Component({
+  template: `
+      <button ion-item (click)="logout()">Sign out</button>
+  `
+})
+export class PopoverPage {
+  constructor(public viewCtrl: ViewController, private auth: AngularFireAuth, private navCtrl: NavController) { }
+
+  logout() {
+    this.auth.logout().catch(err => {
+      console.log(err);
+    });
+    this.viewCtrl.dismiss();
+  }
+}
+
 
 @Component({
   selector: 'page-home',
@@ -17,8 +38,10 @@ export class HomePage {
   items = [];
   token = "";
   constructor(public navCtrl: NavController,
+    private params: NavParams,
     private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
+    private toastCtrl: ToastController,
+    public popoverCtrl: PopoverController,
     private platform: Platform) {
     platform.ready().then(() => {
       if (platform.is('cordova')) {
@@ -35,12 +58,17 @@ export class HomePage {
   }
 
   ionViewWillEnter() {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
     if (localStorage.getItem('items') == null) {
       localStorage.setItem('items', '[]');
     }
     this.items = JSON.parse(localStorage.getItem('items'));
+    let email = this.params.get('email');
+    if (email) {
+      this.toastCtrl.create({
+        message: 'Signed in as ' + email,
+        duration: 3000,
+      }).present();
+    }
   }
 
   addNewNotice() {
@@ -50,6 +78,13 @@ export class HomePage {
         this.items = data.items;
     });
     addModal.present();
+  }
+
+  presentPopover(myEvent) {
+    let popover = this.popoverCtrl.create(PopoverPage);
+    popover.present({
+      ev: myEvent
+    });
   }
 
 }

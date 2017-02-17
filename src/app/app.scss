@@ -36,6 +36,10 @@
 
 }
 
+.no-scroll .scroll-content{
+     overflow: hidden;
+}
+
 ::-webkit-scrollbar {
     width: 5px;
 }
