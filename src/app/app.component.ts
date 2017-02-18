@@ -24,7 +24,7 @@ export class MyApp {
 
     auth.subscribe((state: FirebaseAuthState) => {
       if (state) {
-        this.navCtrl.setRoot(HomePage, { email: state.auth.email });
+        this.navCtrl.setRoot(HomePage, { state: state });
       } else {
         this.navCtrl.setRoot(LoginPage);
       }
