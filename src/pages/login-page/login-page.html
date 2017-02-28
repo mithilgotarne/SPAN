@@ -16,13 +16,18 @@
 
 <ion-content class="no-scroll">
 
-  <div style="padding-top: 50px; margin-right: 16px;">
+  <ion-fab top right edge>
+    <button ion-fab color="secondary" (click)="register()"><ion-icon name="add"></ion-icon></button>
+  </ion-fab>
+
+
+  <div style="margin-top: 90px;margin-right: 16px;">
 
     <ion-item>
       <ion-label color="primary">
-        <ion-icon name="person"></ion-icon>
+        <ion-icon name="mail"></ion-icon>
       </ion-label>
-      <ion-input #email type="text" placeholder="Email"></ion-input>
+      <ion-input #email type="email" placeholder="Email"></ion-input>
     </ion-item>
 
     <ion-item>
@@ -41,5 +46,4 @@
     </div>
 
   </div>
-
 </ion-content>

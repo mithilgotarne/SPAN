@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, LoadingController, ToastController } from 'ionic-angular';
+import { NavController, NavParams, LoadingController, ToastController, ModalController } from 'ionic-angular';
 import { AngularFire, AuthProviders, AuthMethods } from 'angularfire2';
+import { RegisterPage } from '../register/register';
 /*
   Generated class for the LoginPage page.
 
@@ -17,8 +18,14 @@ export class LoginPage {
     public navParams: NavParams,
     public loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
+    public modalCtrl: ModalController,
     public af: AngularFire) {
 
+  }
+
+  register(){
+    let modal = this.modalCtrl.create(RegisterPage);
+    modal.present();
   }
 
   login(email, pass) {

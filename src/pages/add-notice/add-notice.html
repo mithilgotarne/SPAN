@@ -30,7 +30,8 @@
   </ion-item>
 
   <div padding>
-    <button ion-button full (click)="create(title.value, desc.value)">Create</button>
+    <button ion-button full (click)="create(title.value, desc.value)" 
+    [disabled]="desc.value === '' && title.value === '' ">Create</button>
   </div>
 
 </ion-content>

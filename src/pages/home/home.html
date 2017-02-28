@@ -22,19 +22,19 @@
       <ion-col no-padding width-33 style="background: white; margin-top: 1px;">
 
         <ion-list style="height: 100%; overflow: scroll; overflow-x: hidden">
-          <button ion-item *ngFor="let i of items">
+          <button ion-item *ngFor="let n of notices | async">
             
               <ion-grid no-padding>
                 <ion-row>
-                  <ion-col width-80 no-padding>
-                    <h2>Notice Title</h2>
+                  <ion-col width-67 no-padding>
+                    <h2>{{ n.title }}</h2>
                   </ion-col>
-                  <ion-col width-20 no-padding>
-                    <h2 text-right><small>8.50 PM</small></h2>
+                  <ion-col width-33 no-padding>
+                    <h2 text-right><small>{{ n.createdTime | date }}</small></h2>
                   </ion-col>
                 </ion-row>
               </ion-grid>
-              <h3>Created By You</h3>  
+              <h3>Created By {{ n.createdBy }}</h3>  
           
           </button>
         </ion-list>
@@ -80,34 +80,16 @@
   </ion-list-->
   <div hideWhen="core">
 
-    <ion-card *ngFor="let i of items">
+    <ion-card *ngFor="let n of notices | async">
 
-      <button ion-button full clear color="dark">
-          <b>Notice Title</b>
-      </button>
-      <!--ion-card-header>
-        <b>Notice Title</b>    
-      </ion-card-header-->
+      <ion-item>
+        <h2><b>{{ n.title }}</b></h2>
+        <p>{{ n.createdTime | date:'hh:mm a dd MMM, y' }}</p>
+      </ion-item>
+
       <ion-card-content>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni repudiandae distinctio quisquam ipsa eius eos reprehenderit
-        </p>
+        <p>{{ n.desc }}</p>
       </ion-card-content>
-
-      <ion-row no-padding>
-        <ion-col text-left>
-          <button ion-button clear small color="danger" icon-left>
-            <ion-icon name='eye'></ion-icon>
-            View
-          </button>
-        </ion-col>
-        <ion-col text-right>
-          <button ion-button clear small color="danger" icon-left>
-            <ion-icon name='share-alt'></ion-icon>
-            Share
-          </button>
-        </ion-col>
-      </ion-row>
 
     </ion-card>
 

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ViewController } from 'ionic-angular';
+import firebase from 'firebase';
 
 /*
   Generated class for the AddNotice page.
@@ -15,18 +16,22 @@ export class AddNoticePage {
 
   constructor(public viewCtrl: ViewController) { }
 
-  closePage(items?) {
-    if(items)
-      this.viewCtrl.dismiss({ items: items });
-    else
-      this.viewCtrl.dismiss();
+  closePage() {
+    this.viewCtrl.dismiss();
   }
 
   create(title, desc) {
-    var items = JSON.parse(localStorage.getItem('items'));
-    items.push({ title: title, desc: desc, time: Date.now() });
-    localStorage.setItem('items', JSON.stringify(items));
-    this.closePage(items);
+    const user = firebase.auth().currentUser;
+    if (user) {
+      const notice = {
+        title: title,
+        desc: desc,
+        createdTime: firebase.database.ServerValue.TIMESTAMP,
+        createdBy: user.uid
+      }
+      firebase.database().ref('/userNotices/' + user.uid).push(notice);
+    }
+    this.closePage();
   }
 
 }

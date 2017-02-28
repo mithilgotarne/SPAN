@@ -4,6 +4,8 @@ import { MyApp } from './app.component';
 import { HomePage, PopoverPage } from '../pages/home/home';
 import { AddNoticePage } from '../pages/add-notice/add-notice';
 import { LoginPage } from '../pages/login-page/login-page';
+import { SettingsPage } from '../pages/settings/settings';
+import { RegisterPage } from '../pages/register/register';
 
 import { MaterialModule } from '@angular/material';
 import 'hammerjs';
@@ -24,7 +26,9 @@ export const firebaseConfig = {
     HomePage,
     AddNoticePage,
     LoginPage,
-    PopoverPage
+    PopoverPage,
+    SettingsPage,
+    RegisterPage,
   ],
   imports: [
     IonicModule.forRoot(MyApp),
@@ -37,7 +41,9 @@ export const firebaseConfig = {
     HomePage,
     AddNoticePage,
     LoginPage,
-    PopoverPage
+    PopoverPage,
+    SettingsPage,
+    RegisterPage,
   ],
   providers: [{ provide: ErrorHandler, useClass: IonicErrorHandler },]
 })
