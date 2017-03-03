@@ -23,13 +23,16 @@ export class AddNoticePage {
   create(title, desc) {
     const user = firebase.auth().currentUser;
     if (user) {
-      const notice = {
-        title: title,
-        desc: desc,
-        createdTime: firebase.database.ServerValue.TIMESTAMP,
-        createdBy: user.uid
-      }
-      firebase.database().ref('/userNotices/' + user.uid).push(notice);
+      firebase.database().ref('/users/' + user.uid).once('value', snapshot => {
+        const user = snapshot.val();
+        const notice = {
+          title: title,
+          desc: desc,
+          createdTime: firebase.database.ServerValue.TIMESTAMP,
+          createdBy: user.uid
+        }
+        firebase.database().ref('/notices/' + user.role).push(notice);
+      });
     }
     this.closePage();
   }

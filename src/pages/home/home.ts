@@ -6,6 +6,9 @@ import {
   NavController, NavParams,
   ModalController, ToastController, Platform, PopoverController, ViewController
 } from 'ionic-angular';
+import firebase from 'firebase';
+
+import { NoticeDetailsPage } from '../notice-details/notice-details';
 
 import { AddNoticePage } from '../add-notice/add-notice';
 import { SettingsPage } from '../settings/settings';
@@ -16,6 +19,7 @@ import {
   FirebaseAuthState
 } from 'angularfire2';
 
+
 @Component({
   template: `
       <button ion-item (click)="settings()">Settings</button>
@@ -23,9 +27,9 @@ import {
   `
 })
 export class PopoverPage {
-  constructor(public viewCtrl: ViewController, 
-  private auth: AngularFireAuth,
-  public navCtrl: NavController) { }
+  constructor(public viewCtrl: ViewController,
+    private auth: AngularFireAuth,
+    public navCtrl: NavController) { }
 
   logout() {
     this.auth.logout().catch(err => {
@@ -33,9 +37,8 @@ export class PopoverPage {
     });
     this.viewCtrl.dismiss();
   }
-  settings(){
-    this.navCtrl.push(SettingsPage);
-    this.viewCtrl.dismiss();
+  settings() {
+    this.viewCtrl.dismiss({ page: SettingsPage });
   }
 }
 
@@ -71,18 +74,21 @@ export class HomePage {
         Splashscreen.hide();
       }
     });
-  }
 
-  ionViewWillEnter() {
     if (this.state) {
       this.toastCtrl.create({
         message: 'Signed in as ' + this.state.auth.email,
         duration: 3000,
       }).present();
-
-      this.notices = this.af.database.list('/userNotices/' + this.state.uid);
-
+      firebase.database().ref('/users/' + this.state.uid).once('value', snapshot => {
+        const user = snapshot.val();
+        this.notices = this.af.database.list('/notices/' + user['role']);
+      });
     }
+  }
+
+  ionViewWillEnter() {
+
   }
 
   updateToken(token) {
@@ -95,8 +101,16 @@ export class HomePage {
     addModal.present();
   }
 
+  openNotice(notice) {
+    this.navCtrl.push(NoticeDetailsPage, { notice: notice });
+  }
+
   presentPopover(myEvent) {
     let popover = this.popoverCtrl.create(PopoverPage);
+    popover.onDidDismiss(data => {
+      if (data['page'])
+        this.navCtrl.push(data['page']);
+    });
     popover.present({
       ev: myEvent
     });

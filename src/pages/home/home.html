@@ -80,7 +80,7 @@
   </ion-list-->
   <div hideWhen="core">
 
-    <ion-card *ngFor="let n of notices | async">
+    <ion-card *ngFor="let n of notices | async" (click)="openNotice(n)">
 
       <ion-item>
         <h2><b>{{ n.title }}</b></h2>
