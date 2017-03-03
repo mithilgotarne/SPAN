@@ -18,19 +18,20 @@
 </ion-header>
 
 
-<ion-content>
+<ion-content padding-top class="no-scroll">
 
   <ion-item padding-right>
-    <ion-label color="primary" floating>Title</ion-label>
+    <ion-label color="primary" stacked>Title</ion-label>
     <ion-input #title type="text"></ion-input>
   </ion-item>
   <ion-item padding-right>
-    <ion-label color="primary" floating>Description</ion-label>
+    <ion-label color="primary" stacked>Description</ion-label>
     <ion-textarea #desc rows="10"></ion-textarea>
   </ion-item>
 
   <div padding>
-    <button ion-button full (click)="create(title.value, desc.value)">Create</button>
+    <button ion-button full (click)="create(title.value, desc.value)" 
+    [disabled]="desc.value === '' && title.value === '' ">Create</button>
   </div>
 
 </ion-content>

@@ -1,8 +1,12 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
-import { HomePage } from '../pages/home/home';
+import { HomePage, PopoverPage } from '../pages/home/home';
 import { AddNoticePage } from '../pages/add-notice/add-notice';
+import { LoginPage } from '../pages/login-page/login-page';
+import { SettingsPage } from '../pages/settings/settings';
+import { RegisterPage } from '../pages/register/register';
+import { NoticeDetailsPage} from '../pages/notice-details/notice-details';
 
 import { MaterialModule } from '@angular/material';
 import 'hammerjs';
@@ -22,6 +26,11 @@ export const firebaseConfig = {
     MyApp,
     HomePage,
     AddNoticePage,
+    LoginPage,
+    PopoverPage,
+    SettingsPage,
+    RegisterPage,
+    NoticeDetailsPage,
   ],
   imports: [
     IonicModule.forRoot(MyApp),
@@ -32,7 +41,12 @@ export const firebaseConfig = {
   entryComponents: [
     MyApp,
     HomePage,
-    AddNoticePage
+    AddNoticePage,
+    LoginPage,
+    PopoverPage,
+    SettingsPage,
+    RegisterPage,
+    NoticeDetailsPage,
   ],
   providers: [{ provide: ErrorHandler, useClass: IonicErrorHandler },]
 })
