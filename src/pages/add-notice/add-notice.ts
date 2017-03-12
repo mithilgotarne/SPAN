@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ViewController } from 'ionic-angular';
 import firebase from 'firebase';
+import { Notif } from '../../providers/notif';
 
 /*
   Generated class for the AddNotice page.
@@ -10,11 +11,12 @@ import firebase from 'firebase';
 */
 @Component({
   selector: 'page-add-notice',
-  templateUrl: 'add-notice.html'
+  templateUrl: 'add-notice.html',
+  providers: [Notif]
 })
 export class AddNoticePage {
 
-  constructor(public viewCtrl: ViewController) { }
+  constructor(public viewCtrl: ViewController, private notif: Notif) { }
 
   closePage() {
     this.viewCtrl.dismiss();
@@ -31,7 +33,13 @@ export class AddNoticePage {
           createdTime: firebase.database.ServerValue.TIMESTAMP,
           createdBy: user.uid
         }
-        firebase.database().ref('/notices/' + user.role).push(notice);
+        var newNoticeKey = firebase.database().ref('/notices/' + user.role).push().key;
+        var updates = {};
+        updates['/notices/' + user.role + '/' + newNoticeKey] = notice;
+        updates['/sharedWith/' + newNoticeKey + '/' + user.role] = true;
+        firebase.database().ref().update(updates).then(() => {
+          //this.notif.send(user.role, notice).subscribe(res => console.log(res));
+        });
       });
     }
     this.closePage();

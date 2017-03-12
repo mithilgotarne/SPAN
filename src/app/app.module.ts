@@ -3,10 +3,10 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { HomePage, PopoverPage } from '../pages/home/home';
 import { AddNoticePage } from '../pages/add-notice/add-notice';
-import { LoginPage } from '../pages/login-page/login-page';
+import { LoginPage, ResetPasswordPage } from '../pages/login-page/login-page';
 import { SettingsPage } from '../pages/settings/settings';
 import { RegisterPage } from '../pages/register/register';
-import { NoticeDetailsPage} from '../pages/notice-details/notice-details';
+import { NoticeDetailsPage, NoticeSharePage} from '../pages/notice-details/notice-details';
 
 import { MaterialModule } from '@angular/material';
 import 'hammerjs';
@@ -31,6 +31,8 @@ export const firebaseConfig = {
     SettingsPage,
     RegisterPage,
     NoticeDetailsPage,
+    NoticeSharePage,
+    ResetPasswordPage,
   ],
   imports: [
     IonicModule.forRoot(MyApp),
@@ -47,6 +49,8 @@ export const firebaseConfig = {
     SettingsPage,
     RegisterPage,
     NoticeDetailsPage,
+    NoticeSharePage,
+    ResetPasswordPage,
   ],
   providers: [{ provide: ErrorHandler, useClass: IonicErrorHandler },]
 })
