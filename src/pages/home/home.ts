@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 
-import { Splashscreen } from 'ionic-native';
-
 import {
   NavController, NavParams,
   ModalController, ToastController, Platform, PopoverController, ViewController
@@ -16,10 +14,9 @@ import { Firebase } from 'ionic-native';
 
 import { moveIn } from '../../app/animations';
 
-import {
-  AngularFire, AngularFireAuth, FirebaseListObservable, FirebaseObjectObservable,
-  FirebaseAuthState
-} from 'angularfire2';
+import { FirebaseAuthState, AngularFireAuth } from 'angularfire2';
+
+import { FirebaseService } from '../../providers/firebase.service';
 
 
 @Component({
@@ -48,61 +45,64 @@ export class PopoverPage {
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html',
-  animations: [moveIn()]
+  animations: [moveIn()],
+  providers: [FirebaseService]
 })
 export class HomePage {
 
-  notices: FirebaseListObservable<any>;
+  notices = [];
   state: FirebaseAuthState;
-  user: FirebaseObjectObservable<any>;
+  user;
+  userCallback;
+  noticeCallback;
 
   constructor(public navCtrl: NavController,
     private params: NavParams,
     private modalCtrl: ModalController,
     private toastCtrl: ToastController,
+    private fs: FirebaseService,
     public popoverCtrl: PopoverController,
-    private af: AngularFire,
     private platform: Platform) {
 
+  }
+
+  ionViewDidLoad() {
     this.state = this.params.get('state');
-    this.af.database.object('/users/' + this.state.uid).subscribe(user => {
-      this.user = user;
-      platform.ready().then(() => {
-        if (platform.is('cordova')) {
+    this.userCallback = firebase.database().ref('/users/' + this.state.uid).on('value', (user) => {
+      this.user = user.val();
+      this.platform.ready().then(() => {
+        if (this.platform.is('cordova')) {
           Firebase.getToken()
             .then(token => this.updateToken(token)) // save the token server-side and use it to push notifications to this device
             .catch(error => console.log(error));
 
           Firebase.onTokenRefresh()
             .subscribe((token: string) => this.updateToken(token));
-
-          Splashscreen.hide();
         }
-      });
-
-      if (this.state) {
-        this.toastCtrl.create({
-          message: 'Signed in as ' + this.state.auth.email,
-          duration: 3000,
-        }).present();
-        this.notices = this.af.database.list('/notices/' + this.user['role']);
-      }
-    },
-    err => {
-      console.log(err);
+      })
     });
+    if (this.state) {
+      this.toastCtrl.create({
+        message: 'Signed in as ' + this.state.auth.email,
+        duration: 3000,
+      }).present();
+      this.noticeCallback = firebase.database().ref('/notices/' + this.state.uid).on('child_added', snapshot => {
+        this.notices.push(snapshot.val())
+      });
+    }
   }
 
-  ionViewWillEnter() {
-
+  ionViewWillUnload() {
+    firebase.database().ref('/users/' + this.state.uid).off('value', this.userCallback);
+    firebase.database().ref('/notices/' + this.state.uid).off('child_added', this.noticeCallback);
   }
 
   updateToken(token) {
-    this.user.update({ token: token });
+    this.fs.updateUserProperty('token', token).then(() => { console.log('Success') });
   }
 
   addNewNotice() {
-    let addModal = this.modalCtrl.create(AddNoticePage);
+    let addModal = this.modalCtrl.create(AddNoticePage, { user: this.user });
     addModal.present();
   }
 

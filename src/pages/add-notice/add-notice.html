@@ -9,6 +9,9 @@
   <ion-navbar color="primary">
     <ion-title>Add New Notice</ion-title>
     <ion-buttons start>
+      <button ion-button (click)="tag()">
+        <ion-icon style="font-size: 1.66em;" name="share"></ion-icon>
+      </button>
       <button ion-button (click)="closePage()">
         <ion-icon style="font-size: 1.66em;" name="close"></ion-icon>
       </button>
@@ -29,9 +32,16 @@
     <ion-textarea #desc rows="10"></ion-textarea>
   </ion-item>
 
-  <div padding>
-    <button ion-button full (click)="create(title.value, desc.value)" 
-    [disabled]="desc.value === '' && title.value === '' ">Create</button>
-  </div>
-
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar padding-left padding-right color="primary-dark">
+    <ion-title>{{ sendText }}</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-right (click)="create(title.value, desc.value)">
+          Create
+          <ion-icon name="send"></ion-icon>
+        </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

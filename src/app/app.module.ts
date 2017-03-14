@@ -6,7 +6,8 @@ import { AddNoticePage } from '../pages/add-notice/add-notice';
 import { LoginPage, ResetPasswordPage } from '../pages/login-page/login-page';
 import { SettingsPage } from '../pages/settings/settings';
 import { RegisterPage } from '../pages/register/register';
-import { NoticeDetailsPage, NoticeSharePage} from '../pages/notice-details/notice-details';
+import { NoticeDetailsPage } from '../pages/notice-details/notice-details';
+import { NoticeSharePage } from '../pages/notice-share/notice-share';
 
 import { MaterialModule } from '@angular/material';
 import 'hammerjs';

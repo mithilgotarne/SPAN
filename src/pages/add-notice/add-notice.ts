@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { ViewController } from 'ionic-angular';
+import { ModalController, ViewController, NavParams } from 'ionic-angular';
 import firebase from 'firebase';
-import { Notif } from '../../providers/notif';
+import { FirebaseService } from '../../providers/firebase.service';
+import { NoticeSharePage } from '../notice-share/notice-share';
 
 /*
   Generated class for the AddNotice page.
@@ -12,35 +13,52 @@ import { Notif } from '../../providers/notif';
 @Component({
   selector: 'page-add-notice',
   templateUrl: 'add-notice.html',
-  providers: [Notif]
+  providers: [FirebaseService]
 })
 export class AddNoticePage {
 
-  constructor(public viewCtrl: ViewController, private notif: Notif) { }
+  user: any;
+  selectedUsers = [];
+  sendText = "No users seleced";
+
+  constructor(public viewCtrl: ViewController, public modalCtrl: ModalController,
+    navParams: NavParams, private fs: FirebaseService) {
+    this.user = navParams.get('user');
+  }
 
   closePage() {
     this.viewCtrl.dismiss();
   }
 
-  create(title, desc) {
-    const user = firebase.auth().currentUser;
-    if (user) {
-      firebase.database().ref('/users/' + user.uid).once('value', snapshot => {
-        const user = snapshot.val();
-        const notice = {
-          title: title,
-          desc: desc,
-          createdTime: firebase.database.ServerValue.TIMESTAMP,
-          createdBy: user.uid
+  tag() {
+    let modal = this.modalCtrl.create(NoticeSharePage, {user: this.user, users : this.selectedUsers});
+    modal.onDidDismiss(data => {
+      if (data && data.users) {
+        this.selectedUsers = data.users;
+        if (this.selectedUsers.length > 0) {
+          let str = "";
+          if (this.selectedUsers.length == 1)
+            str = this.selectedUsers[0].name;
+          else if (this.selectedUsers.length == 2)
+            str = this.selectedUsers[0].name + ", " + this.selectedUsers[1].name;
+          else {
+            str = this.selectedUsers[0].name + " and " + (this.selectedUsers.length - 1) + " others";
+          }
+          this.sendText = str;
+        }else{
+          this.sendText = "No users seleced";
         }
-        var newNoticeKey = firebase.database().ref('/notices/' + user.role).push().key;
-        var updates = {};
-        updates['/notices/' + user.role + '/' + newNoticeKey] = notice;
-        updates['/sharedWith/' + newNoticeKey + '/' + user.role] = true;
-        firebase.database().ref().update(updates).then(() => {
-          //this.notif.send(user.role, notice).subscribe(res => console.log(res));
-        });
-      });
+      }
+    })
+    modal.present();
+  }
+
+  create(title, desc) {
+    const notice = {
+      title: title,
+      desc: desc,
+      createdTime: firebase.database.ServerValue.TIMESTAMP,
+      createdBy: this.user
     }
     this.closePage();
   }

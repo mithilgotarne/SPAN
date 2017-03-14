@@ -28,11 +28,21 @@ export class RegisterPage {
     firebase.auth().createUserWithEmailAndPassword(email, password).then(() => {
       let user = firebase.auth().currentUser;
       if (user) {
-        firebase.database().ref('/users/' + user.uid).update({
+        var updates = {};
+        var u = {
           name: name,
           uid: user.uid,
           role: this.role
-        });
+        };
+        updates['/users/' + user.uid] = u;
+        firebase.database().ref('/allowedRoles/' + this.role).once('value').then(snapshot => {
+          snapshot.forEach(role => {
+            if (role.val())
+              updates['/rolesUsers/' + role.key + '/' + this.role + '/' + user.uid] = u;
+          });
+          firebase.database().ref().update(updates);
+        })
+
       }
       this.close();
     }).catch(err => {

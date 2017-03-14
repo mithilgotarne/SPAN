@@ -3,7 +3,7 @@ import { NavController, NavParams, ModalController, ViewController } from 'ionic
 import firebase from 'firebase';
 
 import { moveIn } from '../../app/animations';
-import { Notif } from '../../providers/notif';
+import { FirebaseService } from '../../providers/firebase.service';
 
 /*
   Generated class for the NoticeDetails page.
@@ -14,7 +14,7 @@ import { Notif } from '../../providers/notif';
 @Component({
   selector: 'page-notice-share',
   animations: [moveIn(),],
-  providers: [Notif],
+  providers: [FirebaseService],
   template: `
   <ion-header>
 
@@ -81,7 +81,7 @@ export class NoticeSharePage {
     },
   ];
 
-  constructor(public viewCtrl: ViewController, public navParams: NavParams, private notif: Notif) {
+  constructor(public viewCtrl: ViewController, public navParams: NavParams, private fs: FirebaseService) {
     this.notice = navParams.get('notice');
     this.user = navParams.get('user');
     firebase.database().ref('/sharedWith/' + this.notice.$key).on('value', snapshot => {
@@ -133,7 +133,7 @@ export class NoticeSharePage {
     firebase.database().ref().update(updates).then(() => {
       /*for (let r of this.roles)
         if (r.title !== this.user.role && r.isChecked)
-          this.notif.send(r.title, this.notice).subscribe(
+          this.fs.send(r.title, this.notice).subscribe(
             res => { console.log(res) },
             err => {
               console.log(err);

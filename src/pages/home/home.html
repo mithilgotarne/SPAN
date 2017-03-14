@@ -22,7 +22,7 @@
       <ion-col no-padding width-33 style="background: white; margin-top: 1px;">
 
         <ion-list style="height: 100%; overflow: scroll; overflow-x: hidden">
-          <button ion-item *ngFor="let n of notices | async">
+          <button ion-item *ngFor="let n of notices">
             
               <ion-grid no-padding>
                 <ion-row>
@@ -80,7 +80,7 @@
   </ion-list-->
   <div hideWhen="core">
 
-    <ion-card *ngFor="let n of notices | async" (click)="openNotice(n)">
+    <ion-card *ngFor="let n of notices" (click)="openNotice(n)">
 
       <ion-item>
         <h2><b>{{ n.title }}</b></h2>

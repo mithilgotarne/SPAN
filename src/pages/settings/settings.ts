@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, AlertController, LoadingController } from 'ionic-angular';
 import firebase from 'firebase';
+import { FirebaseService } from '../../providers/firebase.service';
 
 /*
   Generated class for the Settings page.
@@ -10,13 +11,15 @@ import firebase from 'firebase';
 */
 @Component({
   selector: 'page-settings',
-  templateUrl: 'settings.html'
+  templateUrl: 'settings.html',
+  providers: [FirebaseService]
 })
 export class SettingsPage {
 
   user: any;
-  constructor(public navCtrl: NavController, public navParams: NavParams, 
-  public loadingCtrl: LoadingController, private alertCtrl: AlertController) { }
+  constructor(public navCtrl: NavController, public navParams: NavParams,
+    private fs: FirebaseService,
+    public loadingCtrl: LoadingController, private alertCtrl: AlertController) { }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SettingsPage');
@@ -63,9 +66,8 @@ export class SettingsPage {
                 content: "Please wait..."
               });
               loader.present();
-              firebase.database().ref('/users/' + this.user.uid).update({
-                name: data.displayName
-              }).then(() => loader.dismiss()).catch(err => loader.dismiss());
+              this.fs.updateUserProperty('name', data.displayName)
+                .then(() => loader.dismiss()).catch(err => loader.dismiss());
             }
           }
         }
