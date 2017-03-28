@@ -21,7 +21,7 @@
 </ion-header>
 
 
-<ion-content padding-top class="no-scroll">
+<ion-content padding-top>
 
   <ion-item padding-right>
     <ion-label color="primary" stacked>Title</ion-label>
@@ -29,9 +29,27 @@
   </ion-item>
   <ion-item padding-right>
     <ion-label color="primary" stacked>Description</ion-label>
-    <ion-textarea #desc rows="10"></ion-textarea>
+    <ion-textarea #desc rows="5"></ion-textarea>
   </ion-item>
-
+  <ion-item padding-right>
+    <label for="noticeFiles" ion-button clear>
+      Upload Files
+    </label>
+    <input id="noticeFiles" type="file" accept="image/*,application/pdf,capture=camera" 
+    multiple (change)="addFiles($event)">
+  </ion-item>
+  <ion-list *ngIf="files.length > 0">
+    <ion-list-header no-margin>
+      <ion-label color="primary" stacked>Attachments</ion-label>
+    </ion-list-header>
+    <ion-item *ngFor="let file of files">
+        <ion-avatar item-left>
+          {{ file.progress }}
+        </ion-avatar>
+        <p>{{ file.file.name }}</p>
+        <ion-icon name="close" item-right></ion-icon>
+    </ion-item>
+  </ion-list>
 </ion-content>
 
 <ion-footer>

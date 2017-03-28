@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 
 import {
   NavController, NavParams,
@@ -7,7 +7,6 @@ import {
 import firebase from 'firebase';
 
 import { NoticeDetailsPage } from '../notice-details/notice-details';
-
 import { AddNoticePage } from '../add-notice/add-notice';
 import { SettingsPage } from '../settings/settings';
 import { Firebase } from 'ionic-native';
@@ -55,6 +54,8 @@ export class HomePage {
   user;
   userCallback;
   noticeCallback;
+  noticeDeletedCallback;
+  selectedNotice: any;
 
   constructor(public navCtrl: NavController,
     private params: NavParams,
@@ -87,7 +88,15 @@ export class HomePage {
         duration: 3000,
       }).present();
       this.noticeCallback = firebase.database().ref('/notices/' + this.state.uid).on('child_added', snapshot => {
-        this.notices.push(snapshot.val())
+        this.notices.push({ notice: snapshot.val(), key: snapshot.key })
+      });
+      this.noticeDeletedCallback = firebase.database().ref('/notices/' + this.state.uid).on('child_removed', snapshot => {
+        for (let i = 0; i < this.notices.length; i++) {
+          if (this.notices[i]['key'] == snapshot.key) {
+            this.notices.splice(i, 1);
+            break;
+          }
+        }
       });
     }
   }
@@ -107,7 +116,13 @@ export class HomePage {
   }
 
   openNotice(notice) {
-    this.navCtrl.push(NoticeDetailsPage, { notice: notice, user: this.user });
+    if (this.platform.is('core')) {
+      this.selectedNotice = notice;
+      console.log(this.selectedNotice);
+    }
+    else {
+      this.navCtrl.push(NoticeDetailsPage, { notice: notice, user: this.user });
+    }
   }
 
   presentPopover(myEvent) {

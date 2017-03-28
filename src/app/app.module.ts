@@ -8,6 +8,9 @@ import { SettingsPage } from '../pages/settings/settings';
 import { RegisterPage } from '../pages/register/register';
 import { NoticeDetailsPage } from '../pages/notice-details/notice-details';
 import { NoticeSharePage } from '../pages/notice-share/notice-share';
+import { NoticeComponent } from '../shared/notice.component';
+
+import { DayPipe } from '../shared/day.pipe';
 
 import { MaterialModule } from '@angular/material';
 import 'hammerjs';
@@ -34,6 +37,8 @@ export const firebaseConfig = {
     NoticeDetailsPage,
     NoticeSharePage,
     ResetPasswordPage,
+    NoticeComponent,
+    DayPipe,
   ],
   imports: [
     IonicModule.forRoot(MyApp),

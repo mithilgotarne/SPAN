@@ -28,7 +28,7 @@
         <h2>{{ u.val.name }}</h2>
         <p>{{ u.val.role }}</p>
       </ion-label>
-      <ion-checkbox color="secondary" [(ngModel)]="u.isChecked" 
+      <ion-checkbox color="secondary" [(ngModel)]="u.isChecked" [disabled]="u.isDisabled"
       (ionChange)="check(i, u.key, u.isChecked)"></ion-checkbox>
     </ion-item>
   </ion-item-group>

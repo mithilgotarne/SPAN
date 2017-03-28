@@ -34,8 +34,37 @@ export class FirebaseService {
     }))
   }
 
-  addNotice(notice){
-    
+  addNotice(notice, selectedUsers) {
+    var updates = {};
+    var pushKey = firebase.database().ref('/notices/' + this.user.uid).push().key;
+    updates['/notices/' + this.user.uid + '/' + pushKey] = notice;
+    updates['/sharedWith/' + pushKey + '/' + this.user.uid] = this.user;
+    for (let user of selectedUsers) {
+      updates['/notices/' + user.uid + '/' + pushKey] = notice;
+      updates['/sharedWith/' + pushKey + '/' + user.uid] = user;
+    }
+    return firebase.database().ref().update(updates);
+  }
+
+  shareNotice(notice, selectedUsers) {
+    var updates = {};
+    for (let user of selectedUsers) {
+      updates['/notices/' + user.uid + '/' + notice.key] = notice.notice;
+      updates['/sharedWith/' + notice.key + '/' + user.uid] = user;
+    }
+    return firebase.database().ref().update(updates);
+
+  }
+
+  deleteNotice(notice) {
+    return Promise.resolve(firebase.database().ref('/sharedWith/' + notice.key).once('value').then(snapshots => {
+      var updates ={};
+      snapshots.forEach(snapshot => {
+        updates['/notices/' + snapshot.key + '/' + notice.key] = null;
+        updates['/sharedWith/' + notice.key + '/' + snapshot.key] = null;
+      });
+      return firebase.database().ref().update(updates);
+    }))
   }
 
   /*send(role, notice) {

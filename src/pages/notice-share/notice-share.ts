@@ -16,25 +16,53 @@ export class NoticeSharePage {
 
   items = [];
   users = [];
+  u: Array<any>;
+  currentUser;
+  notice;
 
   constructor(public viewCtrl: ViewController, public navParams: NavParams) {
+
+    this.u = this.navParams.get('users');
+    this.currentUser = this.navParams.get('user');
+    if (!this.u) {
+      this.getUsersFromSharedWith();
+    } else {
+      this.processUsers(false)
+    }
+
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad NoticeSharePage');
-    let u = this.navParams.get('users');
-    let currentUser = this.navParams.get('user');
-    firebase.database().ref('/rolesUsers/' + currentUser.role).once('value').then(snapshots => {
+  }
+
+  getUsersFromSharedWith() {
+    this.u = []
+    this.notice = this.navParams.get('notice');
+    if (!this.notice)
+      return;
+    firebase.database().ref('/sharedWith/' + this.notice['key']).once('value').then(snapshots => {
+      snapshots.forEach(snapshot => {
+        this.u.push(snapshot.val())
+      })
+      this.processUsers(true);
+      console.log(this.u)
+    });
+
+  }
+
+  processUsers(disabled:boolean) {
+    firebase.database().ref('/rolesUsers/' + this.currentUser.role).once('value').then(snapshots => {
       snapshots.forEach((snapshot) => {
         let role = snapshot.key;
         let list = [];
         snapshot.forEach(user => {
           var val = user.val();
-          if (currentUser.uid != val.uid) {
-            if (this.isIn(u, val))
-              list.push({ key: user.key, val: val, isChecked: true });
+          if (this.currentUser.uid != val.uid) {
+            if (this.isIn(this.u, val))
+              list.push({ key: user.key, val: val, isChecked: true, isDisabled: disabled });
             else
-              list.push({ key: user.key, val: val, isChecked: false });
+              list.push({ key: user.key, val: val, isChecked: false, isDisabled : false });
           }
         })
         this.items.push({ role: role, list: list });
@@ -50,6 +78,8 @@ export class NoticeSharePage {
   }
 
   isIn(u, val) {
+    if (!u)
+      return false;
     for (let i of u)
       if (i.uid == val.uid)
         return true;
@@ -57,15 +87,32 @@ export class NoticeSharePage {
   }
 
   getItems(ev: any) {
-    /*var val = ev.target.value;
+    var val = ev.target.value;
     if (val && val.trim() != '') {
-      this.users = this.items.filter(item => {
-        return (item.val.name.toLowerCase().indexOf(val.toLowerCase()) > -1)
-          || (item.val.role.toLowerCase().indexOf(val.toLowerCase()) > -1);
-      })
+      this.users = [];
+      for (var role of this.items) {
+        //console.log(role.role.toLowerCase());
+        if (role.role.toLowerCase().indexOf(val.toLowerCase()) > -1) {
+          this.users.push({ role: role.role, list: role.list })
+        } else {
+          let list = [];
+          for (var user of role.list) {
+            if (user.val.name.toLowerCase().indexOf(val.toLowerCase()) > -1) {
+              if (this.currentUser.uid != user.val.uid) {
+                if (this.isIn(this.u, user.val))
+                  list.push({ key: user.key, val: user.val, isChecked: true });
+                else
+                  list.push({ key: user.key, val: user.val, isChecked: false });
+              }
+            }
+          }
+          this.users.push({ role: role.role, list: list })
+        }
+      }
     } else {
       this.users = this.items;
-    }*/
+
+    }
   }
 
   check(pos, key, value) {
@@ -88,7 +135,5 @@ export class NoticeSharePage {
     }
     this.viewCtrl.dismiss({ users: data });
   }
-
-
 
 }

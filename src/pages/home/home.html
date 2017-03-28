@@ -15,35 +15,33 @@
 
   <!--p showWhen="cordova" padding style="-webkit-user-select: auto;">Token: {{ token }}</p-->
 
-  <ion-grid showWhen="core" style="padding: 20px 10%">
+  <ion-grid style="height: 100%">
 
-    <ion-row no-padding style="height: 85vh;">
+    <ion-row no-padding style="height: 100%;">
 
-      <ion-col no-padding width-33 style="background: white; margin-top: 1px;">
+      <ion-col no-padding style="background: white; margin-top: 1px;">
 
-        <ion-list style="height: 100%; overflow: scroll; overflow-x: hidden">
-          <button ion-item *ngFor="let n of notices">
+
+        <button ion-item *ngFor="let n of notices" (click)="openNotice(n)">
             
               <ion-grid no-padding>
                 <ion-row>
                   <ion-col width-67 no-padding>
-                    <h2>{{ n.title }}</h2>
+                    <h2>{{ n.notice.title }}</h2>
                   </ion-col>
                   <ion-col width-33 no-padding>
-                    <h2 text-right><small>{{ n.createdTime | date }}</small></h2>
+                    <h2 text-right><small>{{ n.notice.createdTime | day }}</small></h2>
                   </ion-col>
                 </ion-row>
               </ion-grid>
-              <h3>Created By {{ n.createdBy }}</h3>  
-          
+              <h3>Created By {{ n.notice.createdBy.uid == state.uid ? 'You' : n.notice.createdBy.name }}</h3>    
           </button>
-        </ion-list>
 
       </ion-col>
 
-      <ion-col no-padding width-67 style="background: #CFC7B8;">
+      <ion-col no-padding showWhen="core" width-67 style="background: #CFC7B8;">
 
-        <div class="vertical-center-elements" text-center>
+        <div class="vertical-center-elements" text-center *ngIf="!selectedNotice">
 
           <div>
             <img src="assets/icon/main.png" alt="">
@@ -51,6 +49,8 @@
           </div>
 
         </div>
+
+        <notice *ngIf="selectedNotice" [notice]="selectedNotice"></notice>
 
       </ion-col>
 
@@ -78,22 +78,22 @@
 
 
   </ion-list-->
-  <div hideWhen="core">
+  <!--div hideWhen="core">
 
     <ion-card *ngFor="let n of notices" (click)="openNotice(n)">
 
       <ion-item>
-        <h2><b>{{ n.title }}</b></h2>
-        <p>{{ n.createdTime | date:'hh:mm a dd MMM, y' }}</p>
+        <h2><b>{{ n.notice.title }}</b></h2>
+        <p>{{ n.notice.createdTime | day }}</p>
       </ion-item>
 
       <ion-card-content>
-        <p>{{ n.desc }}</p>
+        <p>{{ n.notice.desc }}</p>
       </ion-card-content>
 
     </ion-card>
 
-  </div>
+  </div-->
 
   <ion-fab bottom right (click)="addNewNotice()">
     <button ion-fab color="secondary"><ion-icon name="add"></ion-icon></button>

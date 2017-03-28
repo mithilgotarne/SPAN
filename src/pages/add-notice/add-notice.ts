@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ModalController, ViewController, NavParams } from 'ionic-angular';
+import { ModalController, ViewController, NavParams, ToastController } from 'ionic-angular';
 import firebase from 'firebase';
 import { FirebaseService } from '../../providers/firebase.service';
 import { NoticeSharePage } from '../notice-share/notice-share';
@@ -20,8 +20,9 @@ export class AddNoticePage {
   user: any;
   selectedUsers = [];
   sendText = "No users seleced";
+  files = [];
 
-  constructor(public viewCtrl: ViewController, public modalCtrl: ModalController,
+  constructor(public viewCtrl: ViewController, public modalCtrl: ModalController, private toastCtrl: ToastController,
     navParams: NavParams, private fs: FirebaseService) {
     this.user = navParams.get('user');
   }
@@ -31,7 +32,7 @@ export class AddNoticePage {
   }
 
   tag() {
-    let modal = this.modalCtrl.create(NoticeSharePage, {user: this.user, users : this.selectedUsers});
+    let modal = this.modalCtrl.create(NoticeSharePage, { user: this.user, users: this.selectedUsers });
     modal.onDidDismiss(data => {
       if (data && data.users) {
         this.selectedUsers = data.users;
@@ -45,7 +46,7 @@ export class AddNoticePage {
             str = this.selectedUsers[0].name + " and " + (this.selectedUsers.length - 1) + " others";
           }
           this.sendText = str;
-        }else{
+        } else {
           this.sendText = "No users seleced";
         }
       }
@@ -60,7 +61,30 @@ export class AddNoticePage {
       createdTime: firebase.database.ServerValue.TIMESTAMP,
       createdBy: this.user
     }
-    this.closePage();
+    this.fs.addNotice(notice, this.selectedUsers).then(() => {
+      this.closePage()
+    }).catch(err => {
+
+      let toast = this.toastCtrl.create({ message: err.message, duration: 3000 });
+      toast.present();
+
+    })
+  }
+
+  addFiles($event) {
+    for (let file of $event.srcElement.files) {
+      this.files.push({ file: file, progress: 0 });
+      let uploadtask = firebase.storage().ref('files/' + this.user.uid + '/' + file.name).put(file);
+      uploadtask.on(firebase.storage.TaskEvent.STATE_CHANGED, snapshot => {
+        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        for (let i = 0; i < this.files.length; i++) {
+          if (this.files[i].file.name == file.name) {
+            this.files[i].progress = progress;
+          }
+        }
+      })
+    }
+    console.log(this.files);
   }
 
 }
