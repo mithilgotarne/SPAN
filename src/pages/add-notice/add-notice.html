@@ -35,19 +35,18 @@
     <label for="noticeFiles" ion-button clear>
       Upload Files
     </label>
-    <input id="noticeFiles" type="file" accept="image/*,application/pdf,capture=camera" 
-    multiple (change)="addFiles($event)">
+    <input id="noticeFiles" type="file" multiple (change)="addFiles($event)">
   </ion-item>
   <ion-list *ngIf="files.length > 0">
     <ion-list-header no-margin>
       <ion-label color="primary" stacked>Attachments</ion-label>
     </ion-list-header>
-    <ion-item *ngFor="let file of files">
+    <ion-item *ngFor="let file of files; let i = index">
         <ion-avatar item-left>
-          {{ file.progress }}
-        </ion-avatar>
+          <div *ngIf="file.state == 'running'" class="loader"></div>
+          <ion-icon style="font-size: 2.2em;color: green;" *ngIf="file.state == 'success'"  name="checkmark-circle-outline"></ion-icon></ion-avatar>
         <p>{{ file.file.name }}</p>
-        <ion-icon name="close" item-right></ion-icon>
+        <ion-icon name="close" item-right (click)="removeFile(i)"></ion-icon>
     </ion-item>
   </ion-list>
 </ion-content>

@@ -21,6 +21,7 @@ export class AddNoticePage {
   selectedUsers = [];
   sendText = "No users seleced";
   files = [];
+  uploadTasks = [];
 
   constructor(public viewCtrl: ViewController, public modalCtrl: ModalController, private toastCtrl: ToastController,
     navParams: NavParams, private fs: FirebaseService) {
@@ -55,11 +56,16 @@ export class AddNoticePage {
   }
 
   create(title, desc) {
+    let files = {};
+    for (let file of this.files) {
+      files[file.file.lastModified] = { name: file.file.name, url: file.url, path: file.path, type: file.file.type };
+    }
     const notice = {
       title: title,
       desc: desc,
       createdTime: firebase.database.ServerValue.TIMESTAMP,
-      createdBy: this.user
+      createdBy: this.user,
+      files: files
     }
     this.fs.addNotice(notice, this.selectedUsers).then(() => {
       this.closePage()
@@ -71,18 +77,41 @@ export class AddNoticePage {
     })
   }
 
+  removeFile(index) {
+    if (this.files[index].state != 'success') {
+      this.uploadTasks[index].cancel();
+      this.files.splice(index, 1);
+      this.uploadTasks.splice(index, 1);
+    }
+    else {
+      firebase.storage().ref(this.files[index].path).delete().then(() => {
+        this.files.splice(index, 1);
+        this.uploadTasks.splice(index, 1);
+      })
+    }
+  }
+
   addFiles($event) {
     for (let file of $event.srcElement.files) {
-      this.files.push({ file: file, progress: 0 });
+      this.files.push({ file: file, state: 'running', url: null });
       let uploadtask = firebase.storage().ref('files/' + this.user.uid + '/' + file.name).put(file);
       uploadtask.on(firebase.storage.TaskEvent.STATE_CHANGED, snapshot => {
-        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         for (let i = 0; i < this.files.length; i++) {
           if (this.files[i].file.name == file.name) {
-            this.files[i].progress = progress;
+            this.files[i].state = snapshot.state;
           }
         }
-      })
+      }, null, () => {
+        for (let i = 0; i < this.files.length; i++) {
+          if (this.files[i].file.name == file.name) {
+            this.files[i].url = uploadtask.snapshot.downloadURL;
+            this.files[i].path = 'files/' + this.user.uid + '/' + file.name;
+            this.files[i].state = 'success';
+          }
+        }
+      });
+      this.uploadTasks.push(uploadtask);
+
     }
     console.log(this.files);
   }

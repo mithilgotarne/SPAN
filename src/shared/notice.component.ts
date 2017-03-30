@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnChanges, Input } from '@angular/core';
 
 @Component({
     selector: 'notice',
@@ -22,12 +22,19 @@ import { Component, OnInit, Input } from '@angular/core';
         </ion-card-content>
     </ion-card>
 
-    <ion-card>
+    <ion-card *ngIf="files.length > 0">
             <ion-card-header>
                 Files
             </ion-card-header>
             <ion-card-content>
-                No files attached
+                <ion-slides [pager]="true" [zoom]="true" [slidesPerView]="2">
+                    <ion-slide *ngFor="let file of files">
+                        <img *ngIf="isImage(file.type)" src="{{ file.url }}">
+                        <img *ngIf="!isImage(file.type)" src="assets/icon/docs.png">
+                        <div class="floating-slider-text"><span>{{ file.name }}</span></div>
+                        <div class="floating-slider-icon"><ion-icon name="download"></ion-icon></div>
+                    </ion-slide>
+                </ion-slides>
             </ion-card-content>
     </ion-card>
 
@@ -40,12 +47,57 @@ import { Component, OnInit, Input } from '@angular/core';
             </ion-card-content>
     </ion-card>
     `,
+    styles: [`
+    .slide-zoom{
+        position: relative;
+    }
+    .floating-slider-text, .floating-slider-icon{
+        position: absolute;
+    }
+    .floating-slider-text{
+        width: 100%;
+        bottom: 8%;
+        color: white;
+    }
+    .floating-slider-icon{
+        top: 0%;
+        right: 5%;
+        color: white;
+        background: rgba(0,0,0,0.4);
+        padding: 4px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    .floating-slider-text span{
+        background: rgba(0,0,0,0.5);
+        padding: 5px 5px;
+        border-radius: 10px;
+        font-size: 9px;
+    }
+    .swiper-slide img {
+        height: 134px;
+    }
+    `]
 })
-export class NoticeComponent implements OnInit {
+export class NoticeComponent implements OnChanges {
 
     @Input() notice: any;
-    
-    constructor() { }
+    files = [];
 
-    ngOnInit() { }
+    constructor() {
+    }
+
+    ngOnChanges() {
+        console.log(this.notice);
+        if (this.notice && this.notice.notice && this.notice.notice.files) {
+            for (let key in this.notice.notice.files) {
+                this.files.push(this.notice.notice.files[key])
+            }
+        }
+        console.log(this.files);
+    }
+
+    isImage(type: string) {
+        return type.indexOf("image") > -1;
+    }
 }
