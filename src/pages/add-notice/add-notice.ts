@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { ModalController, ViewController, NavParams, ToastController } from 'ionic-angular';
+import { ModalController, ViewController, NavParams, ToastController, Platform } from 'ionic-angular';
 import firebase from 'firebase';
+import { Diagnostic } from '@ionic-native/diagnostic';
 import { FirebaseService } from '../../providers/firebase.service';
 import { NoticeSharePage } from '../notice-share/notice-share';
 
@@ -23,9 +24,11 @@ export class AddNoticePage {
   files = [];
   uploadTasks = [];
 
-  constructor(public viewCtrl: ViewController, public modalCtrl: ModalController, private toastCtrl: ToastController,
+  constructor(public viewCtrl: ViewController, private diagnostic: Diagnostic, private platform: Platform,
+    public modalCtrl: ModalController, private toastCtrl: ToastController,
     navParams: NavParams, private fs: FirebaseService) {
     this.user = navParams.get('user');
+    this.checkAndroidPermissions();
   }
 
   closePage() {
@@ -116,4 +119,18 @@ export class AddNoticePage {
     console.log(this.files);
   }
 
+  checkAndroidPermissions() {
+    if (this.platform.is('android')) {
+      this.diagnostic.isExternalStorageAuthorized().then(authorised => {
+        if (!authorised) {
+          this.diagnostic.requestExternalStorageAuthorization().then(status => {
+            if (status != this.diagnostic.permissionStatus.GRANTED) {
+              let toast = this.toastCtrl.create({ message: "Sorry, You cannot upload files.", duration: 3000 });
+              toast.present();
+            }
+          }).catch(error => console.log("request error " + error));
+        }
+      }).catch(error => console.log(error))
+    }
+  }
 }
