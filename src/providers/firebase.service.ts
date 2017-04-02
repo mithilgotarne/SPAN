@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
-import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/toPromise';
 import firebase from 'firebase';
 
 /*
@@ -43,7 +43,9 @@ export class FirebaseService {
       updates['/notices/' + user.uid + '/' + pushKey] = notice;
       updates['/sharedWith/' + pushKey + '/' + user.uid] = user;
     }
-    return firebase.database().ref().update(updates);
+    return Promise.resolve(firebase.database().ref().update(updates).then(()=> {
+      return this.send(notice, selectedUsers);
+    }))
   }
 
   shareNotice(notice, selectedUsers) {
@@ -52,13 +54,14 @@ export class FirebaseService {
       updates['/notices/' + user.uid + '/' + notice.key] = notice.notice;
       updates['/sharedWith/' + notice.key + '/' + user.uid] = user;
     }
-    return firebase.database().ref().update(updates);
-
+    return Promise.resolve(firebase.database().ref().update(updates).then(()=> {
+      return this.send(notice.notice, selectedUsers);
+    }))
   }
 
   deleteNotice(notice) {
     return Promise.resolve(firebase.database().ref('/sharedWith/' + notice.key).once('value').then(snapshots => {
-      var updates ={};
+      var updates = {};
       snapshots.forEach(snapshot => {
         updates['/notices/' + snapshot.key + '/' + notice.key] = null;
         updates['/sharedWith/' + notice.key + '/' + snapshot.key] = null;
@@ -67,16 +70,12 @@ export class FirebaseService {
     }))
   }
 
-  /*send(role, notice) {
+  private send(notice, selectedUsers) {
     return this.http.post('https://fast-gorge-72470.herokuapp.com/api', {
-      role: role,
-      payload: {
-        notification: {
-          title: notice.title,
-          body: notice.desc
-        }
-      }
-    }).map( res => res.json());
-  }*/
+      notice: notice,
+      users: selectedUsers
+    }).toPromise()
+    .then(res => res.json())
+  }
 
 }

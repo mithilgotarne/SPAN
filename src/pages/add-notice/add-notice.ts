@@ -14,7 +14,7 @@ import { NoticeSharePage } from '../notice-share/notice-share';
 @Component({
   selector: 'page-add-notice',
   templateUrl: 'add-notice.html',
-  providers: [FirebaseService]
+  providers: [FirebaseService, Diagnostic]
 })
 export class AddNoticePage {
 
@@ -83,14 +83,15 @@ export class AddNoticePage {
   removeFile(index) {
     if (this.files[index].state != 'success') {
       this.uploadTasks[index].cancel();
+      console.log("cancelled")
       this.files.splice(index, 1);
       this.uploadTasks.splice(index, 1);
     }
     else {
       firebase.storage().ref(this.files[index].path).delete().then(() => {
-        this.files.splice(index, 1);
         this.uploadTasks.splice(index, 1);
-      })
+      });
+      this.files.splice(index, 1);
     }
   }
 
@@ -120,7 +121,6 @@ export class AddNoticePage {
   }
 
   checkAndroidPermissions() {
-    if (this.platform.is('android')) {
       this.diagnostic.isExternalStorageAuthorized().then(authorised => {
         if (!authorised) {
           this.diagnostic.requestExternalStorageAuthorization().then(status => {
@@ -132,5 +132,4 @@ export class AddNoticePage {
         }
       }).catch(error => console.log(error))
     }
-  }
 }

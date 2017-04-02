@@ -35,7 +35,7 @@ export class NoticeDetailsPage {
   share() {
     let modal = this.modalCtrl.create(NoticeSharePage, { notice: this.notice, user: this.user, isShared: true });
     modal.onDidDismiss(data => {
-      if (data && data.users) {
+      if (data && data.users && data.users.length > 0) {
         this.fs.shareNotice(this.notice, data.users).then(() => {
           console.log('success');
         }).catch((error) => {

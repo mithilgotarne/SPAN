@@ -20,6 +20,7 @@ export class MyApp {
       if (platform.is('android')) {
         StatusBar.backgroundColorByHexString("#6F8996");
       }
+      
     });
 
     auth.subscribe((state: FirebaseAuthState) => {

@@ -18,6 +18,7 @@ export class NoticeSharePage {
   users = [];
   u: Array<any>;
   currentUser;
+  loadedSharedWith = false;
   notice;
 
   constructor(public viewCtrl: ViewController, public navParams: NavParams) {
@@ -26,6 +27,7 @@ export class NoticeSharePage {
     this.currentUser = this.navParams.get('user');
     if (!this.u) {
       this.getUsersFromSharedWith();
+      this.loadedSharedWith = true;
     } else {
       this.processUsers(false)
     }
@@ -51,7 +53,7 @@ export class NoticeSharePage {
 
   }
 
-  processUsers(disabled:boolean) {
+  processUsers(disabled: boolean) {
     firebase.database().ref('/rolesUsers/' + this.currentUser.role).once('value').then(snapshots => {
       snapshots.forEach((snapshot) => {
         let role = snapshot.key;
@@ -62,7 +64,7 @@ export class NoticeSharePage {
             if (this.isIn(this.u, val))
               list.push({ key: user.key, val: val, isChecked: true, isDisabled: disabled });
             else
-              list.push({ key: user.key, val: val, isChecked: false, isDisabled : false });
+              list.push({ key: user.key, val: val, isChecked: false, isDisabled: false });
           }
         })
         this.items.push({ role: role, list: list });
@@ -125,10 +127,13 @@ export class NoticeSharePage {
   }
 
   goBack() {
+    this.viewCtrl.dismiss();
+  }
+  done() {
     var data = [];
     for (var i of this.items) {
       for (var j of i.list) {
-        if (j.isChecked) {
+        if (!(this.loadedSharedWith && this.isIn(this.u, j.val)) && j.isChecked) {
           data.push(j.val);
         }
       }

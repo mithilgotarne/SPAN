@@ -9,7 +9,7 @@ import firebase from 'firebase';
 import { NoticeDetailsPage } from '../notice-details/notice-details';
 import { AddNoticePage } from '../add-notice/add-notice';
 import { SettingsPage } from '../settings/settings';
-import { Firebase } from 'ionic-native';
+import { Firebase } from '@ionic-native/firebase';
 
 import { moveIn } from '../../app/animations';
 
@@ -45,7 +45,7 @@ export class PopoverPage {
   selector: 'page-home',
   templateUrl: 'home.html',
   animations: [moveIn()],
-  providers: [FirebaseService]
+  providers: [FirebaseService, Firebase]
 })
 export class HomePage {
 
@@ -63,7 +63,9 @@ export class HomePage {
     private toastCtrl: ToastController,
     private fs: FirebaseService,
     public popoverCtrl: PopoverController,
+    private firebase: Firebase,
     private platform: Platform) {
+
 
   }
 
@@ -73,11 +75,11 @@ export class HomePage {
       this.user = user.val();
       this.platform.ready().then(() => {
         if (this.platform.is('cordova')) {
-          Firebase.getToken()
+          this.firebase.getToken()
             .then(token => this.updateToken(token)) // save the token server-side and use it to push notifications to this device
             .catch(error => console.log(error));
 
-          Firebase.onTokenRefresh()
+          this.firebase.onTokenRefresh()
             .subscribe((token: string) => this.updateToken(token));
         }
       })
