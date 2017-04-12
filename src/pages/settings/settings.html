@@ -21,7 +21,7 @@
       <p *ngIf="user?.name">{{ user?.name }}</p>
       <p *ngIf="!user?.name">Display name is not set</p>
     </button>
-    <ion-item>
+    <!--ion-item>
       <ion-icon name="ribbon" item-left></ion-icon>
       Role
       <ion-select *ngIf="user?.role" item-right [(ngModel)]="user.role" (ionChange)="updateRole()">
@@ -30,7 +30,7 @@
         <ion-option value="Professor">Professor</ion-option>
         <ion-option value="Student">Student</ion-option>
       </ion-select>
-    </ion-item>
+    </ion-item-->
   </ion-list>
 
 </ion-content>

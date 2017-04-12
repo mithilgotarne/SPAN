@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ModalController, ViewController, NavParams, ToastController, Platform } from 'ionic-angular';
+import { ModalController, ViewController, NavParams, ToastController, Platform, LoadingController } from 'ionic-angular';
 import firebase from 'firebase';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { FirebaseService } from '../../providers/firebase.service';
@@ -23,9 +23,10 @@ export class AddNoticePage {
   sendText = "No users seleced";
   files = [];
   uploadTasks = [];
+  canUpload = true;
 
   constructor(public viewCtrl: ViewController, private diagnostic: Diagnostic, private platform: Platform,
-    public modalCtrl: ModalController, private toastCtrl: ToastController,
+    public modalCtrl: ModalController, private toastCtrl: ToastController, private loadingCtrl: LoadingController,
     navParams: NavParams, private fs: FirebaseService) {
     this.user = navParams.get('user');
     this.checkAndroidPermissions();
@@ -70,10 +71,14 @@ export class AddNoticePage {
       createdBy: this.user,
       files: files
     }
+    let loading = this.loadingCtrl.create({
+      content: "Please wait..."
+    });
+    loading.present();
     this.fs.addNotice(notice, this.selectedUsers).then(() => {
-      this.closePage()
+      loading.dismiss();
     }).catch(err => {
-
+      loading.dismiss();
       let toast = this.toastCtrl.create({ message: err.message, duration: 3000 });
       toast.present();
 
@@ -121,15 +126,17 @@ export class AddNoticePage {
   }
 
   checkAndroidPermissions() {
-      this.diagnostic.isExternalStorageAuthorized().then(authorised => {
-        if (!authorised) {
-          this.diagnostic.requestExternalStorageAuthorization().then(status => {
-            if (status != this.diagnostic.permissionStatus.GRANTED) {
-              let toast = this.toastCtrl.create({ message: "Sorry, You cannot upload files.", duration: 3000 });
-              toast.present();
-            }
-          }).catch(error => console.log("request error " + error));
-        }
-      }).catch(error => console.log(error))
-    }
+    this.diagnostic.isExternalStorageAuthorized().then(authorised => {
+      if (!authorised) {
+        this.diagnostic.requestExternalStorageAuthorization().then(status => {
+          if (status != this.diagnostic.permissionStatus.GRANTED
+            || status != this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) {
+            let toast = this.toastCtrl.create({ message: "Sorry, You cannot upload files.", duration: 3000 });
+            toast.present();
+            this.canUpload = false;
+          }
+        }).catch(error => { console.log("request error " + error); this.canUpload = false; });
+      }
+    }).catch(error => { console.log(error); this.canUpload = false; })
+  }
 }

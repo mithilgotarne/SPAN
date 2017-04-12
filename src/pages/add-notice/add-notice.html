@@ -31,7 +31,7 @@
     <ion-label color="primary" stacked>Description</ion-label>
     <ion-textarea #desc rows="5"></ion-textarea>
   </ion-item>
-  <ion-item padding-right>
+  <ion-item padding-right *ngIf="canUpload"> 
     <label for="noticeFiles" ion-button clear>
       Upload Files
     </label>
