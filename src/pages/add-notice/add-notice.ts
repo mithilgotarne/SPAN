@@ -77,6 +77,7 @@ export class AddNoticePage {
     loading.present();
     this.fs.addNotice(notice, this.selectedUsers).then(() => {
       loading.dismiss();
+      this.closePage();
     }).catch(err => {
       loading.dismiss();
       let toast = this.toastCtrl.create({ message: err.message, duration: 3000 });
