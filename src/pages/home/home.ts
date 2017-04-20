@@ -138,11 +138,4 @@ export class HomePage {
     });
   }
   
-  logout(){
-  	this.auth.logout().catch(err => {
-      	console.log(err);
-    	});
-    	this.viewCtrl.dismiss();
-  }
-
 }
