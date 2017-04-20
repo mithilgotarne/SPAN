@@ -137,5 +137,12 @@ export class HomePage {
       ev: myEvent
     });
   }
+  
+  logout(){
+  	this.auth.logout().catch(err => {
+      	console.log(err);
+    	});
+    	this.viewCtrl.dismiss();
+  }
 
 }
