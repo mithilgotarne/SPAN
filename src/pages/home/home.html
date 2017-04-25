@@ -1,26 +1,25 @@
-<ion-header>
-  <ion-navbar color="primary">
-    <ion-title>
-      SPAN
-    </ion-title>
-    <ion-buttons start>
-      <button ion-button icon-only (click)="presentPopover($event)">
+<!--p showWhen="cordova" padding style="-webkit-user-select: auto;">Token: {{ token }}</p-->
+
+<ion-grid no-padding style="height: 100%">
+
+  <ion-row no-padding style="height: 100%;">
+
+    <ion-col no-padding style="background: white;">
+
+      <ion-header>
+        <ion-navbar color="primary">
+          <ion-title>
+            SPAN
+          </ion-title>
+          <ion-buttons start>
+            <button ion-button icon-only (click)="presentPopover($event)">
         <ion-icon name="more"></ion-icon>
       </button>
-    </ion-buttons>
-  </ion-navbar>
-</ion-header>
+          </ion-buttons>
+        </ion-navbar>
+      </ion-header>
 
-<ion-content>
-
-  <!--p showWhen="cordova" padding style="-webkit-user-select: auto;">Token: {{ token }}</p-->
-
-  <ion-grid style="height: 100%">
-
-    <ion-row no-padding style="height: 100%;">
-
-      <ion-col no-padding style="background: white; margin-top: 1px;">
-
+      <ion-content>
 
         <button ion-item *ngFor="let n of notices" (click)="openNotice(n)">
             
@@ -37,29 +36,37 @@
               <h3>Created By {{ n.notice.createdBy.uid == state.uid ? 'You' : n.notice.createdBy.name }}</h3>    
           </button>
 
-      </ion-col>
 
-      <ion-col no-padding showWhen="core" width-67 style="background: #CFC7B8;">
+      </ion-content>
 
-        <div class="vertical-center-elements" text-center *ngIf="!selectedNotice">
+    </ion-col>
+
+    <ion-col no-padding showWhen="core" width-67 style="background: #CFC7B8;">
+
+      <!--div class="vertical-center-elements" text-center>
 
           <div>
             <img src="assets/icon/main.png" alt="">
             <h1>Welcome to SPAN!</h1>
           </div>
 
-        </div>
+        </div-->
 
-        <notice *ngIf="selectedNotice" [notice]="selectedNotice"></notice>
+      <ion-nav #sideNav [root]="sideRoot"></ion-nav>
 
-      </ion-col>
-
-    </ion-row>
-
-  </ion-grid>
+    </ion-col>
 
 
-  <!--ion-list>
+    <ion-fab bottom right (click)="addNewNotice()">
+      <button ion-fab color="secondary"><ion-icon name="add"></ion-icon></button>
+    </ion-fab>
+
+  </ion-row>
+
+</ion-grid>
+
+
+<!--ion-list>
     <button ion-item *ngFor="let i of items">
       
         <ion-grid no-padding>
@@ -78,7 +85,7 @@
 
 
   </ion-list-->
-  <!--div hideWhen="core">
+<!--div hideWhen="core">
 
     <ion-card *ngFor="let n of notices" (click)="openNotice(n)">
 
@@ -94,9 +101,3 @@
     </ion-card>
 
   </div-->
-
-  <ion-fab bottom right (click)="addNewNotice()">
-    <button ion-fab color="secondary"><ion-icon name="add"></ion-icon></button>
-  </ion-fab>
-
-</ion-content>

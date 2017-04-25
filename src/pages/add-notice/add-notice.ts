@@ -29,7 +29,9 @@ export class AddNoticePage {
     public modalCtrl: ModalController, private toastCtrl: ToastController, private loadingCtrl: LoadingController,
     navParams: NavParams, private fs: FirebaseService) {
     this.user = navParams.get('user');
-    this.checkAndroidPermissions();
+    if (platform.is('android')) {
+        this.checkAndroidPermissions();
+    }
   }
 
   closePage() {
@@ -82,7 +84,7 @@ export class AddNoticePage {
       loading.dismiss();
       let toast = this.toastCtrl.create({ message: err.message, duration: 3000 });
       toast.present();
-
+      this.closePage();
     })
   }
 

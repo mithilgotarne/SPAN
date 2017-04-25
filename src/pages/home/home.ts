@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 
 import {
   NavController, NavParams,
@@ -7,6 +7,7 @@ import {
 import firebase from 'firebase';
 
 import { NoticeDetailsPage } from '../notice-details/notice-details';
+import { WelcomePage } from '../welcome/welcome';
 import { AddNoticePage } from '../add-notice/add-notice';
 import { SettingsPage } from '../settings/settings';
 import { Firebase } from '@ionic-native/firebase';
@@ -55,7 +56,8 @@ export class HomePage {
   userCallback;
   noticeCallback;
   noticeDeletedCallback;
-  selectedNotice: any;
+  sideRoot: any;
+  @ViewChild('sideNav') sideNav: NavController;
 
   constructor(public navCtrl: NavController,
     private params: NavParams,
@@ -65,8 +67,7 @@ export class HomePage {
     public popoverCtrl: PopoverController,
     private firebase: Firebase,
     private platform: Platform) {
-
-
+    this.sideRoot = WelcomePage
   }
 
   ionViewDidLoad() {
@@ -90,7 +91,7 @@ export class HomePage {
         duration: 3000,
       }).present();
       this.noticeCallback = firebase.database().ref('/notices/' + this.state.uid).on('child_added', snapshot => {
-        this.notices.push({ notice: snapshot.val(), key: snapshot.key })
+        this.notices.unshift({ notice: snapshot.val(), key: snapshot.key })
       });
       this.noticeDeletedCallback = firebase.database().ref('/notices/' + this.state.uid).on('child_removed', snapshot => {
         for (let i = 0; i < this.notices.length; i++) {
@@ -119,8 +120,8 @@ export class HomePage {
 
   openNotice(notice) {
     if (this.platform.is('core')) {
-      this.selectedNotice = notice;
-      console.log(this.selectedNotice);
+      this.sideNav.push(NoticeDetailsPage, { notice: notice, user: this.user });
+      console.log(notice);
     }
     else {
       this.navCtrl.push(NoticeDetailsPage, { notice: notice, user: this.user });
@@ -137,5 +138,5 @@ export class HomePage {
       ev: myEvent
     });
   }
-  
+
 }

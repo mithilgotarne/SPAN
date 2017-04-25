@@ -1,4 +1,5 @@
 import { Component, OnChanges, Input } from '@angular/core';
+import { Platform } from 'ionic-angular';
 
 @Component({
     selector: 'notice',
@@ -27,12 +28,14 @@ import { Component, OnChanges, Input } from '@angular/core';
                 Files
             </ion-card-header>
             <ion-card-content>
-                <ion-slides [pager]="true" [zoom]="true" [slidesPerView]="2">
+                <ion-slides [pager]="true" [zoom]="true" [slidesPerView]="slidesPerView">
                     <ion-slide *ngFor="let file of files">
                         <img *ngIf="isImage(file.type)" src="{{ file.url }}">
                         <img *ngIf="!isImage(file.type)" src="assets/icon/docs.png">
                         <div class="floating-slider-text"><span>{{ file.name }}</span></div>
-                        <div class="floating-slider-icon"><ion-icon name="download"></ion-icon></div>
+                        <div class="floating-slider-icon">
+                            <a target="_blank" href="{{ file.url }}"><ion-icon name="download"></ion-icon></a>
+                        </div>
                     </ion-slide>
                 </ion-slides>
             </ion-card-content>
@@ -83,12 +86,19 @@ export class NoticeComponent implements OnChanges {
 
     @Input() notice: any;
     files = [];
+    slidesPerView = 4;
 
-    constructor() {
+    constructor(private platform: Platform) {
+
+        if(this.platform.is('android')){
+            this.slidesPerView = 2;
+        }
+
     }
 
     ngOnChanges() {
         console.log(this.notice);
+        this.files = []
         if (this.notice && this.notice.notice && this.notice.notice.files) {
             for (let key in this.notice.notice.files) {
                 this.files.push(this.notice.notice.files[key])
@@ -100,4 +110,5 @@ export class NoticeComponent implements OnChanges {
     isImage(type: string) {
         return type.indexOf("image") > -1;
     }
+
 }

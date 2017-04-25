@@ -22,14 +22,14 @@ export class NoticeDetailsPage {
   user: any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-    public fs: FirebaseService, public modalCtrl: ModalController) { }
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad NoticeDetailsPage');
+    public fs: FirebaseService, public modalCtrl: ModalController) {
+    console.log('constructor')
     this.notice = this.navParams.get('notice');
     this.user = this.navParams.get('user');
-    console.log(this.notice)
-    console.log(this.user)
+  }
+
+  ionViewDidEnter() {
+    console.log('ionViewDidEnter NoticeDetailsPage');
   }
 
   share() {
@@ -46,11 +46,12 @@ export class NoticeDetailsPage {
     modal.present();
   }
 
-  delete(){
-    this.fs.deleteNotice(this.notice).then((res)=>{
+  delete() {
+    this.fs.deleteNotice(this.notice).then((res) => {
       console.log('success');
-      this.navCtrl.pop();
-    }).catch((error)=>{
+      if (this.navCtrl.canGoBack)
+        this.navCtrl.pop().then(() => console.log("success back")).catch(() => console.log("error back"));
+    }).catch((error) => {
       console.log(error);
     })
   }

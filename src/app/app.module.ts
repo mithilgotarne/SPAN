@@ -9,6 +9,7 @@ import { RegisterPage } from '../pages/register/register';
 import { NoticeDetailsPage } from '../pages/notice-details/notice-details';
 import { NoticeSharePage } from '../pages/notice-share/notice-share';
 import { NoticeComponent } from '../shared/notice.component';
+import { WelcomePage } from '../pages/welcome/welcome';
 
 import { DayPipe } from '../shared/day.pipe';
 
@@ -39,6 +40,7 @@ export const firebaseConfig = {
     ResetPasswordPage,
     NoticeComponent,
     DayPipe,
+    WelcomePage,
   ],
   imports: [
     IonicModule.forRoot(MyApp),
@@ -57,6 +59,7 @@ export const firebaseConfig = {
     NoticeDetailsPage,
     NoticeSharePage,
     ResetPasswordPage,
+    WelcomePage,
   ],
   providers: [{ provide: ErrorHandler, useClass: IonicErrorHandler },]
 })

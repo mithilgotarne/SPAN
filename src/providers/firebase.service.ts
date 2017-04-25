@@ -44,7 +44,10 @@ export class FirebaseService {
       updates['/sharedWith/' + pushKey + '/' + user.uid] = user;
     }
     return Promise.resolve(firebase.database().ref().update(updates).then(()=> {
-      return this.send(notice, selectedUsers);
+      if (selectedUsers && selectedUsers.length > 0)
+        return this.send(notice, selectedUsers);
+      else 
+        return Promise.resolve({ status: "success" }) 
     }))
   }
 

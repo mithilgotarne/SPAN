@@ -67,7 +67,7 @@ export class NoticeSharePage {
               list.push({ key: user.key, val: val, isChecked: false, isDisabled: false });
           }
         })
-        this.items.push({ role: role, list: list });
+        this.items.push({ role: role, list: list, isChecked: false });
         /*let val = snapshot.val();
         if (this.isIn(u, val))
           this.items.push({ key: snapshot.key, val: val, isChecked: true });
@@ -95,7 +95,7 @@ export class NoticeSharePage {
       for (var role of this.items) {
         //console.log(role.role.toLowerCase());
         if (role.role.toLowerCase().indexOf(val.toLowerCase()) > -1) {
-          this.users.push({ role: role.role, list: role.list })
+          this.users.push({ role: role.role, list: role.list, isChecked: false })
         } else {
           let list = [];
           for (var user of role.list) {
@@ -108,7 +108,7 @@ export class NoticeSharePage {
               }
             }
           }
-          this.users.push({ role: role.role, list: list })
+          this.users.push({ role: role.role, list: list, isChecked: false })
         }
       }
     } else {
@@ -118,11 +118,21 @@ export class NoticeSharePage {
   }
 
   check(pos, key, value) {
-    for (var i = 0; i < this.items[pos].length; i++) {
+    if (value == false) {
+      this.items[pos].isChecked = false;
+    }
+    for (var i = 0; i < this.items[pos].list.length; i++) {
       if (this.items[pos].list[i].key == key) {
         this.items[pos].list[i].isChecked = value;
         break;
       }
+    }
+  }
+
+  checkAll(pos, val) {
+    for (var i = 0; i < this.items[pos].list.length; i++) {
+      if (!this.items[pos].list[i].isDisabled)
+        this.items[pos].list[i].isChecked = val;
     }
   }
 
