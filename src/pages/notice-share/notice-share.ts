@@ -20,6 +20,7 @@ export class NoticeSharePage {
   currentUser;
   loadedSharedWith = false;
   notice;
+  isCheckAll = true;
 
   constructor(public viewCtrl: ViewController, public navParams: NavParams) {
 
@@ -45,7 +46,7 @@ export class NoticeSharePage {
       return;
     firebase.database().ref('/sharedWith/' + this.notice['key']).once('value').then(snapshots => {
       snapshots.forEach(snapshot => {
-        this.u.push(snapshot.val())
+        this.u.push({ uid: snapshot.key })
       })
       this.processUsers(true);
       console.log(this.u)
@@ -54,29 +55,38 @@ export class NoticeSharePage {
   }
 
   processUsers(disabled: boolean) {
-    firebase.database().ref('/rolesUsers/' + this.currentUser.role).once('value').then(snapshots => {
-      snapshots.forEach((snapshot) => {
-        let role = snapshot.key;
-        let list = [];
+    firebase.database().ref('/users/').orderByChild("r_value")
+      .startAt(this.currentUser.r_value).once('value').then(snapshot => {
         snapshot.forEach(user => {
           var val = user.val();
+          let pos = this.addRole(val.role);
           if (this.currentUser.uid != val.uid) {
             if (this.isIn(this.u, val))
-              list.push({ key: user.key, val: val, isChecked: true, isDisabled: disabled });
+              this.items[pos].list.push({ key: user.key, val: val, isChecked: true, isDisabled: disabled });
             else
-              list.push({ key: user.key, val: val, isChecked: false, isDisabled: false });
+              this.items[pos].list.push({ key: user.key, val: val, isChecked: false, isDisabled: false });
           }
         })
-        this.items.push({ role: role, list: list, isChecked: false });
+        //this.items.push({ role: role, list: list, isChecked: false });
         /*let val = snapshot.val();
         if (this.isIn(u, val))
           this.items.push({ key: snapshot.key, val: val, isChecked: true });
         else
           this.items.push({ key: snapshot.key, val: val, isChecked: false });*/
+        this.users = this.items;
+        console.log(this.users);
       });
-      this.users = this.items;
-      console.log(this.users);
-    });
+  }
+
+  addRole(role) {
+    let i;
+    for (i = 0; i < this.items.length; i++) {
+      if (this.items[i].role == role) {
+        return i;
+      }
+    }
+    this.items.push({ role: role, list: [], isChecked: false })
+    return i;
   }
 
   isIn(u, val) {
@@ -95,25 +105,23 @@ export class NoticeSharePage {
       for (var role of this.items) {
         //console.log(role.role.toLowerCase());
         if (role.role.toLowerCase().indexOf(val.toLowerCase()) > -1) {
-          this.users.push({ role: role.role, list: role.list, isChecked: false })
+          this.users.push(role)
         } else {
           let list = [];
           for (var user of role.list) {
             if (user.val.name.toLowerCase().indexOf(val.toLowerCase()) > -1) {
               if (this.currentUser.uid != user.val.uid) {
-                if (this.isIn(this.u, user.val))
-                  list.push({ key: user.key, val: user.val, isChecked: true });
-                else
-                  list.push({ key: user.key, val: user.val, isChecked: false });
+                list.push(user);
               }
             }
           }
-          this.users.push({ role: role.role, list: list, isChecked: false })
+          this.users.push({ role: role.role, list: list, isChecked: role.isChecked })
         }
       }
+      this.isCheckAll = false;
     } else {
       this.users = this.items;
-
+      this.isCheckAll = true;
     }
   }
 
@@ -131,8 +139,10 @@ export class NoticeSharePage {
 
   checkAll(pos, val) {
     for (var i = 0; i < this.items[pos].list.length; i++) {
-      if (!this.items[pos].list[i].isDisabled)
+      console.log(this.isIn(this.users, this.items[pos].list[i]))
+      if (!this.items[pos].list[i].isDisabled) {
         this.items[pos].list[i].isChecked = val;
+      }
     }
   }
 

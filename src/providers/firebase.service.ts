@@ -36,12 +36,21 @@ export class FirebaseService {
 
   addNotice(notice, selectedUsers) {
     var updates = {};
-    var pushKey = firebase.database().ref('/notices/' + this.user.uid).push().key;
-    updates['/notices/' + this.user.uid + '/' + pushKey] = notice;
-    updates['/sharedWith/' + pushKey + '/' + this.user.uid] = this.user;
+    var userNotice = {
+      title: notice.title,
+      createdTime: notice.createdTime,
+      createdBy: {
+        name: notice.createdBy.name,
+        uid: notice.createdBy.uid
+      }
+    }
+    var pushKey = firebase.database().ref('/notices').push().key;
+    updates['/userNotices/' + this.user.uid + '/' + pushKey] = userNotice;
+    updates['/notices/' + pushKey] = notice;
+    updates['/sharedWith/' + pushKey + '/' + this.user.uid] = true;
     for (let user of selectedUsers) {
-      updates['/notices/' + user.uid + '/' + pushKey] = notice;
-      updates['/sharedWith/' + pushKey + '/' + user.uid] = user;
+      updates['/userNotices/' + user.uid + '/' + pushKey] = userNotice;
+      updates['/sharedWith/' + pushKey + '/' + user.uid] = true;
     }
     return Promise.resolve(firebase.database().ref().update(updates).then(()=> {
       if (selectedUsers && selectedUsers.length > 0)
@@ -53,9 +62,17 @@ export class FirebaseService {
 
   shareNotice(notice, selectedUsers) {
     var updates = {};
+    var userNotice = {
+      title: notice.notice.title,
+      createdTime: notice.notice.createdTime,
+      createdBy: {
+        name: notice.notice.createdBy.name,
+        uid: notice.notice.createdBy.uid
+      }
+    }
     for (let user of selectedUsers) {
-      updates['/notices/' + user.uid + '/' + notice.key] = notice.notice;
-      updates['/sharedWith/' + notice.key + '/' + user.uid] = user;
+      updates['/userNotices/' + user.uid + '/' + notice.key] = userNotice;
+      updates['/sharedWith/' + notice.key + '/' + user.uid] = true;
     }
     return Promise.resolve(firebase.database().ref().update(updates).then(()=> {
       return this.send(notice.notice, selectedUsers);
@@ -65,8 +82,9 @@ export class FirebaseService {
   deleteNotice(notice) {
     return Promise.resolve(firebase.database().ref('/sharedWith/' + notice.key).once('value').then(snapshots => {
       var updates = {};
+      updates['/notices/' + notice.key] = notice;
       snapshots.forEach(snapshot => {
-        updates['/notices/' + snapshot.key + '/' + notice.key] = null;
+        updates['/userNotices/' + snapshot.key + '/' + notice.key] = null;
         updates['/sharedWith/' + notice.key + '/' + snapshot.key] = null;
       });
       return firebase.database().ref().update(updates);

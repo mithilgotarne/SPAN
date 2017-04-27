@@ -29,7 +29,8 @@
   <ion-item-group *ngFor="let user of users; let i = index;">
     <ion-item-divider color="light" *ngIf="user.list.length > 0">
       <ion-label>{{ user.role }}</ion-label>
-      <ion-checkbox color="secondary" [(ngModel)]="user.isChecked" (click)="checkAll(i, user.isChecked)"></ion-checkbox>
+      <ion-checkbox *ngIf="isCheckAll"
+      color="secondary" [(ngModel)]="user.isChecked" (click)="checkAll(i, user.isChecked)"></ion-checkbox>
     </ion-item-divider>
     <ion-item *ngFor="let u of user.list">
       <ion-label>

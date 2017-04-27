@@ -3,7 +3,7 @@ import { NavController, NavParams, ModalController } from 'ionic-angular';
 import { FirebaseService } from '../../providers/firebase.service';
 
 import { NoticeSharePage } from '../notice-share/notice-share';
-
+import firebase from 'firebase';
 /*
   Generated class for the NoticeDetails page.
 
@@ -25,6 +25,13 @@ export class NoticeDetailsPage {
     public fs: FirebaseService, public modalCtrl: ModalController) {
     console.log('constructor')
     this.notice = this.navParams.get('notice');
+    firebase.database().ref('/notices/' + this.notice.key).once('value').then(snapshot => {
+      this.notice = { notice: snapshot.val(), key: snapshot.key }
+    })
+      .catch(() => {
+        this.navCtrl.pop();
+      })
+    console.log(this.notice)
     this.user = this.navParams.get('user');
   }
 

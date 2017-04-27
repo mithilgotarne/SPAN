@@ -21,7 +21,7 @@ import { FirebaseService } from '../../providers/firebase.service';
 
 @Component({
   template: `
-      <button ion-item (click)="settings()">Settings</button>
+      <!--button ion-item (click)="settings()">Settings</button-->
       <button ion-item (click)="logout()">Sign out</button>
   `
 })
@@ -90,7 +90,7 @@ export class HomePage {
         message: 'Signed in as ' + this.state.auth.email,
         duration: 3000,
       }).present();
-      this.noticeCallback = firebase.database().ref('/notices/' + this.state.uid).on('child_added', snapshot => {
+      this.noticeCallback = firebase.database().ref('/userNotices/' + this.state.uid).on('child_added', snapshot => {
         this.notices.unshift({ notice: snapshot.val(), key: snapshot.key })
       });
       this.noticeDeletedCallback = firebase.database().ref('/notices/' + this.state.uid).on('child_removed', snapshot => {
@@ -106,7 +106,7 @@ export class HomePage {
 
   ionViewWillUnload() {
     firebase.database().ref('/users/' + this.state.uid).off('value', this.userCallback);
-    firebase.database().ref('/notices/' + this.state.uid).off('child_added', this.noticeCallback);
+    firebase.database().ref('/userNotices/' + this.state.uid).off('child_added', this.noticeCallback);
   }
 
   updateToken(token) {
